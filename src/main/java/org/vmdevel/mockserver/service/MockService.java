@@ -1,10 +1,10 @@
 package org.vmdevel.mockserver.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.vmdevel.mockserver.model.MockModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j

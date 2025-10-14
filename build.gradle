@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.6'
+	id 'org.springframework.boot' version '2.7.17'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -8,11 +8,11 @@ group = 'org.vmdevel'
 version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
-}
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(11)
+//	}
+//}
 
 repositories {
 	mavenCentral()

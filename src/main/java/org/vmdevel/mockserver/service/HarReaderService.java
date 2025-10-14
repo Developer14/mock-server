@@ -39,7 +39,7 @@ public class HarReaderService implements InitializingBean {
 //                .map(s ->
 //                        s.replaceAll("https://dms-dsr.vmorales.cl", "")
 //                                .replaceAll("https://auth-dms-dsr.vmorales.cl", ""))
-                .toList();
+                .collect(Collectors.toList());
 
         requestSet.forEach(System.out::println);
 
