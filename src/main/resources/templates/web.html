@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>|Mock server|</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<h3>the request server...</h3>
+
+<div>
+    <!--<form action="#" th:action="@{/landing}" th:object="${sampleModel}" method="post" enctype="multipart/form-data">-->
+    <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+        <input type="file" name="harFile" />
+
+        <br><br>
+        <button type="submit">Upload Har</button>
+    </form>
+
+    <div th:if="${theHarFile != null}">
+        <div th:text="${theHarFile}"></div>
+    </div>
+
+    <div class="results-container" th:unless="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
+
+        <h3>HAR Request List</h3>
+
+        <form action="#" th:action="@{/load}" th:object="${requestListWrapper}" method="post">
+            <button type="submit" disabled>Load Mock Requests</button>
+            <table class="requests-table">
+                <thead>
+                <tr>
+                    <!--<th th:text="#{seedstarter.datePlanted}">Date Planted</th>
+                    <th th:text="#{seedstarter.covered}">Covered</th>-->
+                    <th>Method</th>
+                    <th>Domain</th>
+                    <th>Path</th>
+                    <th>Content type</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="request, stat : *{requestModels}">
+                    <td th:text="*{requestModels[__${stat.index}__].method}"></td>
+                    <td th:text="*{requestModels[__${stat.index}__].url.domain}"></td>
+                    <td><input class="path-input" type="text" th:field="*{requestModels[__${stat.index}__].url.path}"></td>
+                    <td th:text="*{requestModels[__${stat.index}__].content.mimeType}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

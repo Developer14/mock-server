@@ -1,14 +1,7 @@
 package org.vmdevel.mockserver;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.vmdevel.mockserver.model.MockModel;
-import org.vmdevel.mockserver.service.HarReaderService;
-import org.vmdevel.mockserver.service.MockService;
-
-import java.util.List;
 
 @SpringBootApplication
 public class MockServerApplication {
@@ -17,7 +10,7 @@ public class MockServerApplication {
         SpringApplication.run(MockServerApplication.class, args);
     }
 
-    @Bean
+    /*@Bean
     CommandLineRunner init(HarReaderService harReaderService, MockService mockService) {
 
 
@@ -32,5 +25,5 @@ public class MockServerApplication {
 
             mockService.loadMocks(mockModels);
         };
-    }
+    }*/
 }

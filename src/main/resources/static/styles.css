@@ -1,0 +1,53 @@
+body {
+    font-family: Arial;
+    background-color: gray;
+}
+tr :nth-child(1) {
+  text-align: left;
+  width: 5%;
+}
+tr :nth-child(2) {
+  text-align: left;
+  width: 20%;
+}
+tr :nth-child(3) {
+  text-align: left;
+  width: 60%;
+}
+tr :nth-child(4) {
+  text-align: left;
+  width: 15%;
+}
+
+tfoot tr :nth-child(1) {
+  text-align: right;
+}
+tfoot tr :nth-child(2) {
+  text-align: left;
+}
+th,
+td {
+
+  font-size: .9em;
+  padding: 5px 7px;
+}
+tbody tr:nth-child(odd) {
+  background-color: #eeeeee;
+}
+
+.results-container {
+    background-color: #d7d7d7;
+
+    .requests-table {
+        width: 100%;
+        margin: 10px auto;
+        border-collapse: collapse;
+        border-top: 1px solid #999999;
+        border-bottom: 1px solid #999999;
+
+        .path-input {
+            width: 100%;
+            padding: 3px;
+        }
+    }
+}

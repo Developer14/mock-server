@@ -4,14 +4,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.vmdevel.mockserver.model.HarModel;
-import org.vmdevel.mockserver.model.MockModel;
+import org.vmdevel.mockserver.model.RequestModel;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -23,23 +21,16 @@ public class HarReaderService implements InitializingBean {
 
     private ObjectMapper objectMapper;
 
-    public List<MockModel> processHar(Function<HarModel.HarEntry, MockModel> mapFunction) throws IOException {
+    public Set<RequestModel> processHar(InputStream inputStream, Function<HarModel.HarEntry, RequestModel> mapFunction) throws IOException {
 
-        Resource resource = new ClassPathResource("dms-dsr.vmorales.cl_Archive_[25-10-12 22-27-35].har");
-        File file = resource.getFile();
-        HarModel harModel = objectMapper.readValue(file, HarModel.class);
+        HarModel harModel = objectMapper.readValue(inputStream, HarModel.class);
 
         log.info(harModel.toString());
 
-        List<MockModel> requestSet = harModel.getLog().getEntries()
+        Set<RequestModel> requestSet = harModel.getLog().getEntries()
                 .stream()
                 .map(mapFunction)
-//                .map(HarModel.HarEntry::getRequest)
-//                .map(HarModel.HarRequest::getUrl)
-//                .map(s ->
-//                        s.replaceAll("https://dms-dsr.vmorales.cl", "")
-//                                .replaceAll("https://auth-dms-dsr.vmorales.cl", ""))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         requestSet.forEach(System.out::println);
 

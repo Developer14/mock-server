@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.vmdevel.mockserver.service.MockService;
 
@@ -13,7 +14,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/mock")
 public class MockController {
 
     private final MockService mockService;
@@ -22,8 +23,13 @@ public class MockController {
         this.mockService = mockService;
     }
 
-    @GetMapping("/**")
-    public ResponseEntity<String> mockRequest(HttpServletRequest request) throws IOException {
+    @RequestMapping(value = "/**", method = {
+            RequestMethod.GET,
+            RequestMethod.POST,
+            RequestMethod.PUT,
+            RequestMethod.PATCH,
+            RequestMethod.DELETE})
+    public ResponseEntity<String> mockRequestHandler(HttpServletRequest request) throws IOException {
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_JSON)
