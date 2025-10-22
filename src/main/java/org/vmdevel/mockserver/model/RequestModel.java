@@ -13,6 +13,8 @@ public class RequestModel {
 
     private static final Pattern DOMAIN_PATTERN =
             Pattern.compile("(?:https?://)(?:www.)?([a-zA-Z0-9-]+\\.)+([a-zA-Z0-9]{2,6})+(?::\\d{4})?");
+    private static final Pattern LOCALHOST_PATTERN =
+            Pattern.compile("(?:https?://localhost)(?::\\d{4})?");
 
     private String method;
     private MockUrl url;
@@ -25,11 +27,15 @@ public class RequestModel {
     }
 
     private MockUrl parseUrl(String url) {
-        log.debug("parsing url {}", url);
+        log.info("parsing url {}", url);
 
         Matcher matcher = DOMAIN_PATTERN.matcher(url);
-        if(!matcher.find())
-            throw new IllegalArgumentException("invalid url");
+        if(!matcher.find()) {
+            matcher = LOCALHOST_PATTERN.matcher(url);
+            if(!matcher.find()) {
+                throw new IllegalArgumentException("invalid url");
+            }
+        }
 
         return new MockUrl(matcher.group(), url.substring(matcher.group().length()));
     }
