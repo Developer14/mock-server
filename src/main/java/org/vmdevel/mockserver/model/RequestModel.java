@@ -3,12 +3,15 @@ package org.vmdevel.mockserver.model;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 @ToString
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestModel {
 
     private static final Pattern DOMAIN_PATTERN =
@@ -16,11 +19,13 @@ public class RequestModel {
     private static final Pattern LOCALHOST_PATTERN =
             Pattern.compile("(?:https?://localhost)(?::\\d{4})?");
 
+    private String uuid;
     private String method;
     private MockUrl url;
     private MockContent content;
 
     public RequestModel(String method, String url, MockContent content) {
+        this.uuid = UUID.randomUUID().toString();
         this.method = method;
         this.url = parseUrl(url);
         this.content = content;

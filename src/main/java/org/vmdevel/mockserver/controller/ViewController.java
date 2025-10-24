@@ -16,6 +16,8 @@ import org.vmdevel.mockserver.service.HarReaderService;
 import org.vmdevel.mockserver.service.MockService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,11 +47,11 @@ public class ViewController {
                                 .build()
                 ));
 
-        mockService.loadMocks(requestModels);
+        //mockService.loadMocks(requestModels);
 
         model.addAttribute("theHarFile", multipartFile.getOriginalFilename());
         model.addAttribute("requestListWrapper", RequestListWrapper.builder()
-                        .requestModels(requestModels)
+                        .requestModels(new ArrayList<>(requestModels))
                 .build());
 
         return "web";
@@ -58,7 +60,7 @@ public class ViewController {
     @PostMapping(value = "/load")
     public String loadMocks(@ModelAttribute RequestListWrapper requestListWrapper) {
         log.info("loading mock requests: {}", requestListWrapper);
-        //mockService.loadMocks(requestModels);
+        mockService.loadMocks(new HashSet<>(requestListWrapper.getRequestModels()));
 
         return "web";
     }

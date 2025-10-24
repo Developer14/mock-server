@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.vmdevel.mockserver.model.RequestModel;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,5 +15,15 @@ import java.util.Set;
 @Builder
 public class RequestListWrapper {
 
-    private Set<RequestModel> requestModels;
+    private List<RequestModel> requestModels;
+    /*private List<String> reqPaths;*/
+
+    /*@Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ReqPath {
+
+        private String path;
+    }*/
 }

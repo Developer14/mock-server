@@ -7,44 +7,68 @@
 </head>
 <body>
 
-<h3>the request server...</h3>
-
+<h2>Mock Server</h2>
 <div>
     <!--<form action="#" th:action="@{/landing}" th:object="${sampleModel}" method="post" enctype="multipart/form-data">-->
     <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
-        <input type="file" name="harFile" />
-
-        <br><br>
-        <button type="submit">Upload Har</button>
+        <input type="file" name="harFile"/>
+        <button type="submit" class="button-3" role="button">Cargar archivo Har</button>
     </form>
 
     <div th:if="${theHarFile != null}">
         <div th:text="${theHarFile}"></div>
     </div>
 
-    <div class="results-container" th:unless="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
+    <div class="results-container"
+         th:unless="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
 
-        <h3>HAR Request List</h3>
+        <h3>Peticiones HTTP</h3>
 
         <form action="#" th:action="@{/load}" th:object="${requestListWrapper}" method="post">
-            <button type="submit" disabled>Load Mock Requests</button>
-            <table class="requests-table">
-                <thead>
-                <tr>
-                    <!--<th th:text="#{seedstarter.datePlanted}">Date Planted</th>
-                    <th th:text="#{seedstarter.covered}">Covered</th>-->
-                    <th>Method</th>
-                    <th>Domain</th>
-                    <th>Path</th>
-                    <th>Content type</th>
-                </tr>
-                </thead>
+            <button type="submit">Load Mock Requests</button>
+            <table class="outer-table">
                 <tbody>
+                <tr>
+                    <td>
+                        <table class="requests-table">
+                            <tr class="content-row">
+                                <th>Method</th>
+                                <th>Domain</th>
+                                <th>Path</th>
+                                <th>Content Type</th>
+                                <th>Opts.</th>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
                 <tr th:each="request, stat : *{requestModels}">
-                    <td th:text="*{requestModels[__${stat.index}__].method}"></td>
-                    <td th:text="*{requestModels[__${stat.index}__].url.domain}"></td>
-                    <td><input class="path-input" type="text" th:field="*{requestModels[__${stat.index}__].url.path}"></td>
-                    <td th:text="*{requestModels[__${stat.index}__].content.mimeType}"></td>
+                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].uuid}">
+                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].method}">
+                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].url.domain}">
+                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].content.mimeType}">
+
+                    <td>
+                        <table class="requests-table">
+                            <tr class="content-row">
+                                <td th:text="${request.method}"></td>
+                                <td class="data-cell" th:text="${request.url.domain}"></td>
+                                <td><input class="path-input" type="text"
+                                           th:field="*{requestModels[__${stat.index}__].url.path}">
+                                </td>
+                                <td class="data-cell" th:text="${request.content.mimeType}"></td>
+                                <td>
+                                    <button type="button" th:onclick="toggleDetailsView([[${request.uuid}]])">Resp</button>
+                                </td>
+                            </tr>
+                            <tr th:id="${request.uuid}" class="row-details">
+                                <td colspan="5">
+                                    <span>Texto Respuesta</span>
+                                    <textarea th:field="*{requestModels[__${stat.index}__].content.text}" spellcheck="false"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+
                 </tr>
                 </tbody>
             </table>
@@ -52,5 +76,17 @@
 
     </div>
 </div>
+
+<script language="JavaScript">
+
+    function toggleDetailsView(elementId) {
+        //console.log('showing response...', elementId);
+        var el = document.getElementById(elementId);
+        //console.log('element...', el, el.style.display);
+        var displayValue = (el.style.display == 'none' || el.style.display == '') ? 'block' : 'none';
+        el.style.display = displayValue;
+    }
+
+</script>
 </body>
 </html>
