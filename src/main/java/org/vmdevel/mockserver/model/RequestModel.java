@@ -3,6 +3,7 @@ package org.vmdevel.mockserver.model;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +44,18 @@ public class RequestModel {
         }
 
         return new MockUrl(matcher.group(), url.substring(matcher.group().length()));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RequestModel that = (RequestModel) o;
+        return Objects.equals(method, that.method) && Objects.equals(url, that.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(method, url);
     }
 
     @ToString

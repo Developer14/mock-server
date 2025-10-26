@@ -3,77 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <title>|Mock server|</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 
-<h2>Mock Server</h2>
-<div>
-    <!--<form action="#" th:action="@{/landing}" th:object="${sampleModel}" method="post" enctype="multipart/form-data">-->
-    <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
-        <input type="file" name="harFile"/>
-        <button type="submit" class="button-3" role="button">Cargar archivo Har</button>
-    </form>
+<div class="container-fluid">
+    <h2>Mock Server</h2>
 
-    <div th:if="${theHarFile != null}">
-        <div th:text="${theHarFile}"></div>
+    <div class="row" th:if="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
+        <div class="col-12">
+            <!--<form action="#" th:action="@{/landing}" th:object="${sampleModel}" method="post" enctype="multipart/form-data">-->
+            <form action="#" th:action="@{/upload}" method="post" enctype="multipart/form-data">
+
+                <div class="d-grid gap-1">
+                    <div>
+                        <label for="formFile" class="form-label">Seleccionar archivo HAR</label>
+                        <input class="form-control form-control-sm" type="file" id="formFile" name="harFile">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-file-earmark-bar-graph-fill"></i> Cargar HAR
+                    </button>
+                </div>
+
+                <!--<input type="file" name="harFile"/>
+                -->
+            </form>
+        </div>
     </div>
+    <!--<div class="row">
+        <div class="col-12">
+            <div th:if="${theHarFile != null}">
+                <div th:text="${theHarFile}"></div>
+            </div>
+        </div>
+    </div>-->
 
-    <div class="results-container"
-         th:unless="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
+    <div class="row" th:unless="${requestListWrapper == null || #lists.isEmpty(requestListWrapper.requestModels)}">
+        <div class="col-12">
+            <div class="results-container">
 
-        <h3>Peticiones HTTP</h3>
+                <h5 th:text="${theHarFile}"></h5>
+                <h5>Peticiones HTTP</h5>
 
-        <form action="#" th:action="@{/load}" th:object="${requestListWrapper}" method="post">
-            <button type="submit">Load Mock Requests</button>
-            <table class="outer-table">
-                <tbody>
-                <tr>
-                    <td>
-                        <table class="requests-table">
-                            <tr class="content-row">
-                                <th>Method</th>
-                                <th>Domain</th>
-                                <th>Path</th>
-                                <th>Content Type</th>
-                                <th>Opts.</th>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr th:each="request, stat : *{requestModels}">
-                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].uuid}">
-                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].method}">
-                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].url.domain}">
-                    <input type="hidden" th:field="*{requestModels[__${stat.index}__].content.mimeType}">
 
-                    <td>
-                        <table class="requests-table">
-                            <tr class="content-row">
-                                <td th:text="${request.method}"></td>
-                                <td class="data-cell" th:text="${request.url.domain}"></td>
-                                <td><input class="path-input" type="text"
-                                           th:field="*{requestModels[__${stat.index}__].url.path}">
-                                </td>
-                                <td class="data-cell" th:text="${request.content.mimeType}"></td>
-                                <td>
-                                    <button type="button" th:onclick="toggleDetailsView([[${request.uuid}]])">Resp</button>
-                                </td>
-                            </tr>
-                            <tr th:id="${request.uuid}" class="row-details">
-                                <td colspan="5">
-                                    <span>Texto Respuesta</span>
-                                    <textarea th:field="*{requestModels[__${stat.index}__].content.text}" spellcheck="false"></textarea>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
+                <form action="#" th:action="@{/load}" th:object="${requestListWrapper}" method="post">
+                    <button type="button" onclick="goToInicio()" class="btn btn-warning btn-sm">Limpiar Todo</button>
+                    <button type="submit" class="btn btn-success btn-sm">Iniciar/actualizar Mocks</button>
 
-                </tr>
-                </tbody>
-            </table>
-        </form>
+                    <table class="table table-dark table-striped request-list-table">
 
+                        <thead>
+                        <tr class="content-row">
+                            <th>Method</th>
+                            <th>Domain</th>
+                            <th>Path</th>
+                            <th>Content Type</th>
+                            <th>Opts.</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="content-row__" th:each="request, stat : *{requestModels}">
+
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].uuid}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].method}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].url.domain}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].content.mimeType}">
+
+                            <td style="width: 7%;" th:text="${request.method}"></td>
+                            <td style="width: 15%;" class="data-cell_" th:text="${request.url.domain}"></td>
+                            <td style="width: 60%;"><input class="path-input" type="text"
+                                       th:field="*{requestModels[__${stat.index}__].url.path}">
+                            </td>
+                            <td style="width: 10%;" class="data-cell_" th:text="${request.content.mimeType}"></td>
+                            <td style="width: 5%;">
+                                <!--<button type="button" th:onclick="toggleDetailsView([[${request.uuid}]])">Resp</button>-->
+                                <!--<button type="button" th:onclick="toggleDetailsView([[${request.uuid}]])"
+                                        class="btn btn-light"
+                                        style="&#45;&#45;bs-btn-padding-y: .25rem; &#45;&#45;bs-btn-padding-x: .5rem; &#45;&#45;bs-btn-font-size: .75rem;">
+                                    <i class="bi bi-plus-circle-fill"></i>
+                                </button>-->
+
+                                <button type="button" class="btn btn-outline-primary"
+                                        style="&#45;&#45;bs-btn-padding-y: .25rem; &#45;&#45;bs-btn-padding-x: .5rem; &#45;&#45;bs-btn-font-size: .75rem;"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="${'#'+request.uuid}">
+                                    <i class="bi bi-plus-circle-fill"></i>
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" th:id="${request.uuid}" tabindex="-1"
+                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Response</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <textarea th:field="*{requestModels[__${stat.index}__].content.text}"
+                                                        spellcheck="false"></textarea>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cerrar
+                                                </button>
+                                                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+
+
+                        <!--<tr th:id="${request.uuid}" class="row-details">
+                            <td colspan="5">
+                                <span>Texto Respuesta</span>
+                                <textarea th:field="*{requestModels[__${stat.index}__].content.text}" spellcheck="false"></textarea>
+                            </td>
+                        </tr>-->
+                    </table>
+                </form>
+
+
+            </div>
+        </div>
     </div>
 </div>
 
@@ -85,6 +149,10 @@
         //console.log('element...', el, el.style.display);
         var displayValue = (el.style.display == 'none' || el.style.display == '') ? 'block' : 'none';
         el.style.display = displayValue;
+    }
+
+    function goToInicio() {
+        window.location = 'http://localhost:8080/web';
     }
 
 </script>
