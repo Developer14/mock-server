@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>|Mock server|</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" style="border-bottom: 1px solid #47464e;">
+    <!-- Your navbar content here -->
+    <div class="row">
+        <div class="col-12" style="margin-left: 15px;">
+            <i class="bi bi-send-check-fill"></i>
+            <strong style="font-size:1.3em; margin-left: 2px;">Mock Server</strong>
+        </div>
+    </div>
+
+</nav>
+<main role="main" class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="results-container">
+
+                <form action="#" th:action="@{/load}" th:object="${requestListWrapper}" method="post">
+
+                    <div class="sticky-top sticky-top-container">
+
+                        <div class="sticky-top-container">
+                            <div style="display:flex; gap: 10px; justify-content: flex-end;">
+                                <div style="flex-grow:1;">
+                                    <h6>Peticiones HTTP</h6>
+                                </div>
+
+                                <button type="button" onclick="goToInicio()" class="btn btn-outline-warning btn-sm" disabled>Ver Logs</button>
+                                <button type="button" onclick="goToInicio()" class="btn btn-outline-secondary btn-sm">Limpiar Todo</button>
+                                <button type="submit" th:name="action" th:value="load" class="btn btn-success btn-sm" th:disabled="${state == 'loaded'}"
+                                style="padding: 0 50px;">
+                                    Cargar Mocks
+                                </button>
+                            </div>
+                            <div>
+                                <div th:if="${state != 'loaded'}" class="alert-pending-updates" role="alert">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    <span th:if="${state == 'pendingChanges'}">Hay cambios no cargados aun.</span>
+                                    <span th:if="${state == 'newFile'}">Mocks aun no cargados.</span>
+                                </div>
+                                <div th:if="${state == 'loaded'}" class="info-mocks-loaded" role="alert">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Mocks cargados.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table table-dark table-striped request-list-table">
+
+                        <thead>
+                        <tr class="content-row">
+                            <th>Method</th>
+                            <th>Domain</th>
+                            <th>Path</th>
+                            <th>Content Type</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="content-row__" th:each="request, stat : *{requestModels}">
+
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].uuid}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].method}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].url.domain}">
+                            <input type="hidden" th:field="*{requestModels[__${stat.index}__].content.mimeType}">
+
+                            <td style="width: 7%;" th:text="${request.method}"></td>
+                            <td style="width: 15%;" class="data-cell_" th:text="${request.url.domain}"></td>
+                            <td style="width: 60%;" class="data-cell_" th:text="${request.url.path}"></td>
+                            <td style="width: 10%;" class="data-cell_" th:text="${request.content.mimeType}"></td>
+                            <td style="width: 5%;">
+                                <button type="button" class="btn btn-outline-primary"
+                                        style="&#45;&#45;bs-btn-padding-y: .25rem; &#45;&#45;bs-btn-padding-x: .5rem; &#45;&#45;bs-btn-font-size: .75rem;"
+                                        data-bs-toggle="modal"
+                                        th:data-bs-target="${'#'+request.uuid}">
+                                    <i class="bi bi-pen-fill"></i>
+                                </button>
+
+                                <!--<<<<<<<<<<<<<<<<<<<<< Modal >>>>>>>>>>>>>>>>>>>>>-->
+                                <div class="modal fade" th:id="${request.uuid}" tabindex="-1"
+                                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Petición</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 5px;"
+                                                     th:text="${request.method}"></div>
+                                                <input class="path-input" type="text"
+                                                       th:field="*{requestModels[__${stat.index}__].url.path}">
+                                                <textarea th:field="*{requestModels[__${stat.index}__].content.text}"
+                                                          spellcheck="false"></textarea>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cerrar
+                                                </button>
+                                                <button type="submit" th:name="action" th:value="update" class="btn btn-primary">Actualizar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<script language="JavaScript">
+
+    function toggleDetailsView(elementId) {
+        //console.log('showing response...', elementId);
+        var el = document.getElementById(elementId);
+        //console.log('element...', el, el.style.display);
+        var displayValue = (el.style.display == 'none' || el.style.display == '') ? 'block' : 'none';
+        el.style.display = displayValue;
+    }
+
+    function goToInicio() {
+        window.location = 'http://localhost:8080/web';
+    }
+
+</script>
+</body>
+</html>

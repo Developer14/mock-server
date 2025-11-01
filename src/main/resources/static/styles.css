@@ -1,9 +1,31 @@
+/* Example using both standardized and Webkit properties */
+html {
+
+    scrollbar-width: thin; /* Standard */
+    scrollbar-color: gray transparent; /* Standard */
+}
+
+/* For Webkit browsers (e.g., Chrome, Safari) */
+html::-webkit-scrollbar {
+  width: 8px; /* Width of the entire scrollbar */
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent; /* Color of the track */
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: blue; /* Color of the scrollbar thumb */
+  border-radius: 6px; /* Roundness of the scrollbar thumb */
+}
+
 body {
     font-family: Arial;
-    background-color: #3a393e;
+    background-color: #18171a;
     color: white;
     overflow-y: scroll;
 }
+
 
 table, tbody, thead, tr, th, td {
     margin: 0;
@@ -11,8 +33,17 @@ table, tbody, thead, tr, th, td {
 
 
 .results-container {
-}
 
+
+}
+.sticky-top-container {
+        display: flex;
+          flex-direction: column;
+          gap: 5px;
+          padding-top: 2rem;
+          padding-bottom: 10px;
+          background-color: #18171a
+    }
 .outer-table {
     background-color: #3e3e41;
     border: 1px solid gray;
@@ -41,6 +72,7 @@ table, tbody, thead, tr, th, td {
     background-color: transparent;
     color: white;
     border-radius: 4px;
+    margin-bottom: 5px;
 }
 
 textarea {
@@ -48,6 +80,9 @@ textarea {
     height:300px;
     box-sizing: border-box; /* Ensures padding and border are included in width/height */
     resize: none; /* Optional: Disable user resizing */
+}
+
+textarea, .path-input {
     background-color: #323233;
     color: white;
 }
@@ -55,6 +90,24 @@ textarea {
 .request-list-table {
     width: 100%;
     margin-top: 10px;
-    font-size: .9em;
+    font-size: .8em;
 
+}
+
+.alert-pending-updates {
+  background-color: #cbcb61;
+  padding: 5px 10px;
+  font-size: .8em;
+  color: #0e0e01;
+  border-radius: 3px;
+    border: 1px solid #d0dbd0;
+}
+
+.info-mocks-loaded {
+    background-color: #7bad89;
+  padding: 5px 10px;
+  font-size: .8em;
+  color: #0e4812;
+  border-radius: 3px;
+  border: 1px solid #d0dbd0;
 }

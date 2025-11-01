@@ -47,21 +47,41 @@ public class ViewController {
                                 .build()
                 ));
 
-        //mockService.loadMocks(requestModels);
-
-        model.addAttribute("theHarFile", multipartFile.getOriginalFilename());
+        /*model.addAttribute("theHarFile", multipartFile.getOriginalFilename());
         model.addAttribute("requestListWrapper", RequestListWrapper.builder()
                         .requestModels(new ArrayList<>(requestModels))
+                .build());*/
+
+        model.addAttribute("state", "newFile");
+        this.setModel(model, multipartFile.getOriginalFilename(), RequestListWrapper.builder()
+                .requestModels(new ArrayList<>(requestModels))
                 .build());
 
-        return "web";
+        return "mocks";
     }
 
     @PostMapping(value = "/load")
-    public String loadMocks(@ModelAttribute RequestListWrapper requestListWrapper) {
-        log.info("loading mock requests: {}", requestListWrapper);
-        mockService.loadMocks(new HashSet<>(requestListWrapper.getRequestModels()));
+    public String loadMocks(
+            @ModelAttribute RequestListWrapper requestListWrapper,
+            @RequestParam(value = "action") String action, ModelMap modelMap) {
 
-        return "web";
+        log.info("action invoked >>> {}", action);
+        if (action.equals("update")) {
+            log.info("updating mock requests...");
+            setModel(modelMap, "nn", requestListWrapper);
+            modelMap.addAttribute("state", "pendingChanges");
+        }else if (action.equals("load")) {
+            log.info("loading mock requests: {}", requestListWrapper);
+            modelMap.addAttribute("state", "loaded");
+            mockService.loadMocks(new HashSet<>(requestListWrapper.getRequestModels()));
+        }
+
+        return "mocks";
+    }
+
+    private void setModel(ModelMap model, String harFileName, RequestListWrapper requestListWrapper) {
+
+        model.addAttribute("theHarFile", harFileName);
+        model.addAttribute("requestListWrapper", requestListWrapper);
     }
 }
